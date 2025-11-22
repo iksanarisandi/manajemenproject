@@ -1,0 +1,19 @@
+[build]
+  command = "npm run build"
+  functions = "netlify/functions"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["@neondatabase/serverless"]
+
+[functions."scheduled-reminders"]
+  schedule = "0 9 * * *"
+
+[[plugins]]
+  package = "@netlify/plugin-functions-install-core"
