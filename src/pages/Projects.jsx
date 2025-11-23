@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Layout from '../components/Layout'
 import { format } from 'date-fns'
+import { formatRupiah } from '../utils/format'
 
 export default function Projects() {
   const [projects, setProjects] = useState([])
@@ -162,7 +163,7 @@ export default function Projects() {
                   <h3 className="text-lg font-bold text-gray-900">{project.name}</h3>
                   <p className="text-gray-600 text-sm">Client: {project.clientName}</p>
                   <p className="text-gray-900 font-semibold mt-2">
-                    Rp {parseFloat(project.value).toLocaleString('id-ID')}
+                    Rp {formatRupiah(parseFloat(project.value))}
                   </p>
                 </div>
                 <p className="text-sm text-gray-600">

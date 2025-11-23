@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Layout from '../components/Layout'
+import { formatRupiah } from '../utils/format'
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -32,16 +33,16 @@ export default function Dashboard() {
       const projects = projectsRes.data
       const maintenance = maintenanceRes.data
 
-      const totalRevenue = projects.reduce((sum, p) => sum + parseFloat(p.value || 0), 0)
+      const completedProjects = projects.filter(p => p.projectStatus === 'completed')
+      const totalRevenue = completedProjects.reduce((sum, p) => sum + parseFloat(p.value || 0), 0)
       const activeProjects = projects.filter(p => p.projectStatus === 'in-progress').length
-      const completedProjects = projects.filter(p => p.projectStatus === 'completed').length
       const activeMaintenance = maintenance.filter(m => m.active).length
 
       setStats({
         totalClients: clients.length,
         totalProjects: projects.length,
         activeProjects,
-        completedProjects,
+        completedProjects: completedProjects.length,
         totalRevenue,
         activeMaintenance,
       })
@@ -129,7 +130,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Revenue</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  Rp {stats.totalRevenue.toLocaleString('id-ID')}
+                  Rp {formatRupiah(stats.totalRevenue)}
                 </p>
               </div>
               <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">

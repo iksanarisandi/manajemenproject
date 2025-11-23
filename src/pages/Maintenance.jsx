@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Layout from '../components/Layout'
+import { formatRupiah } from '../utils/format'
 
 export default function Maintenance() {
   const [maintenances, setMaintenances] = useState([])
@@ -89,11 +90,36 @@ export default function Maintenance() {
     }
   }
 
-  const sendWhatsAppReminder = (maintenance) => {
-    const message = encodeURIComponent(
-      `Halo kak ${maintenance.clientName}, pembayaran maintenance web ${maintenance.projectName} senilai ${parseFloat(maintenance.monthlyCost).toLocaleString('id-ID')}. Mohon diselesaikan. Pembayaran bisa lewat e-wallet atau rekening. Terima kasih.`
-    )
-    window.open(`https://wa.me/${maintenance.clientWa}?text=${message}`, '_blank')
+  const sendWhatsAppReminder = async (maintenance) => {
+    try {
+      const token = localStorage.getItem('token')
+      const settings = await axios.get('/.netlify/functions/settings', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+
+      const { bankAccount, ewallet } = settings.data
+      const amount = formatRupiah(parseFloat(maintenance.monthlyCost))
+      
+      let paymentInfo = ''
+      if (bankAccount) {
+        paymentInfo += `\n\nRekening: ${bankAccount}`
+      }
+      if (ewallet) {
+        paymentInfo += `\n\nE-Wallet:\n${ewallet}`
+      }
+
+      const message = encodeURIComponent(
+        `Halo kak ${maintenance.clientName}, pembayaran maintenance web ${maintenance.projectName} senilai Rp ${amount}. Mohon diselesaikan.${paymentInfo}\n\nTerima kasih.`
+      )
+      window.open(`https://wa.me/${maintenance.clientWa}?text=${message}`, '_blank')
+    } catch (error) {
+      console.error('Failed to fetch settings:', error)
+      const amount = formatRupiah(parseFloat(maintenance.monthlyCost))
+      const message = encodeURIComponent(
+        `Halo kak ${maintenance.clientName}, pembayaran maintenance web ${maintenance.projectName} senilai Rp ${amount}. Mohon diselesaikan. Pembayaran bisa lewat e-wallet atau rekening. Terima kasih.`
+      )
+      window.open(`https://wa.me/${maintenance.clientWa}?text=${message}`, '_blank')
+    }
   }
 
   const openModal = (maintenance = null) => {
@@ -156,10 +182,10 @@ export default function Maintenance() {
                   <p className="text-gray-600 text-sm">Client: {maintenance.clientName}</p>
                   <div className="mt-2 space-y-1">
                     <p className="text-sm text-gray-700">
-                      Initial Cost: <span className="font-semibold">Rp {parseFloat(maintenance.initialCost).toLocaleString('id-ID')}</span>
+                      Initial Cost: <span className="font-semibold">Rp {formatRupiah(parseFloat(maintenance.initialCost))}</span>
                     </p>
                     <p className="text-sm text-gray-700">
-                      Monthly Cost: <span className="font-semibold">Rp {parseFloat(maintenance.monthlyCost).toLocaleString('id-ID')}</span>
+                      Monthly Cost: <span className="font-semibold">Rp {formatRupiah(parseFloat(maintenance.monthlyCost))}</span>
                     </p>
                     <p className="text-sm text-gray-700">
                       Payment Date: <span className="font-semibold">{maintenance.paymentDate} of each month</span>
