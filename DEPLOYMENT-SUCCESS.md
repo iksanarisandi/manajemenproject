@@ -90,7 +90,7 @@ Tables will be created automatically when you first register a user. Just try to
 ## 🔐 Your Credentials (Save These):
 
 **Site URL:** https://manajemenproject.netlify.app
-**JWT Secret:** `07d5bfbb78cb3e5c3d528d7cdb38c86087b38ea73a6e986f72fb0c75a29b78ce`
+**JWT Secret:** `[CHECK_NETLIFY_ENV_VARS]`
 **Netlify Email:** iksan10058@gmail.com
 
 **IMPORTANT:** Keep JWT_SECRET safe!

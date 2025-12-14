@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1765675556984,
+      "tag": "0000_open_blazing_skull",
+      "breakpoints": true
+    }
+  ]
+}

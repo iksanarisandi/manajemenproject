@@ -132,7 +132,7 @@ Timestamp: 23/11/2024, 16:00:00
 
 ## 🤖 Bot Configuration:
 
-**Bot Token:** `8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o`
+**Bot Token:** `[Configured securely in environment variables]`
 
 **Untuk cek bot aktif:**
 1. Buka Telegram
@@ -157,14 +157,14 @@ Setelah test-reminder berhasil, Anda bisa test scheduled function:
 
 ### Check Bot Status:
 ```
-https://api.telegram.org/bot8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o/getMe
+https://api.telegram.org/bot[YOUR_BOT_TOKEN]/getMe
 ```
 
 Buka URL di browser, harus return info bot.
 
 ### Check Updates:
 ```
-https://api.telegram.org/bot8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o/getUpdates
+https://api.telegram.org/bot[YOUR_BOT_TOKEN]/getUpdates
 ```
 
 Ini akan show pesan terakhir ke bot (including Chat ID).

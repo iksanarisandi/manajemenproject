@@ -64,7 +64,7 @@ Edit `.env` and fill in the values:
 ```env
 DATABASE_URL=your_neon_database_url_from_netlify
 JWT_SECRET=your_random_secret_key_here
-TELEGRAM_BOT_TOKEN=8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o
+TELEGRAM_BOT_TOKEN=[YOUR_BOT_TOKEN_HERE]
 TELEGRAM_CHAT_ID=your_telegram_chat_id
 ```
 

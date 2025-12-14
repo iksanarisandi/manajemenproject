@@ -62,7 +62,7 @@ Add these variables:
 |----------|-------|
 | `DATABASE_URL` | *(Already set by Neon integration)* |
 | `JWT_SECRET` | Generate a random string (use https://randomkeygen.com/) |
-| `TELEGRAM_BOT_TOKEN` | `8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o` |
+| `TELEGRAM_BOT_TOKEN` | `[YOUR_BOT_TOKEN_HERE]` |
 | `TELEGRAM_CHAT_ID` | Your chat ID from step 6 |
 
 ### 8. Setup Local Environment

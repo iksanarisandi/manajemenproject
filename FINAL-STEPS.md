@@ -9,7 +9,7 @@ Saya sudah setup hampir semuanya! Tinggal 3 langkah terakhir:
 - ✅ Dependencies installed
 - ✅ Netlify connected
 - ✅ Database created (Neon)
-- ✅ JWT_SECRET generated: `07d5bfbb78cb3e5c3d528d7cdb38c86087b38ea73a6e986f72fb0c75a29b78ce`
+- ✅ JWT_SECRET generated: `[YOUR_GENERATED_JWT_SECRET]`
 - ✅ File .env sudah dibuat (tinggal isi DATABASE_URL)
 
 ---
@@ -47,7 +47,7 @@ DATABASE_URL=postgresql://neondb_owner:xxxxx@ep-xxx.us-east-2.aws.neon.tech/neon
 
 3. **Isi:**
    - Key: `JWT_SECRET`
-   - Value: `07d5bfbb78cb3e5c3d528d7cdb38c86087b38ea73a6e986f72fb0c75a29b78ce`
+   - Value: `[YOUR_GENERATED_JWT_SECRET]`
 
 4. **Klik** "Create variable"
 
@@ -115,7 +115,7 @@ https://app.netlify.com/projects/manajemenproject/deploys
 ## 📝 Summary:
 
 **Your Site:** https://manajemenproject.netlify.app
-**JWT Secret:** `07d5bfbb78cb3e5c3d528d7cdb38c86087b38ea73a6e986f72fb0c75a29b78ce`
+**JWT Secret:** `[YOUR_GENERATED_JWT_SECRET]`
 **Admin:** iksan10058@gmail.com
 
 **Save JWT_SECRET somewhere safe!**
@@ -128,7 +128,7 @@ https://app.netlify.com/projects/manajemenproject/deploys
 
 **Step 2:** Add JWT_SECRET to Netlify:
 - Key: `JWT_SECRET`  
-- Value: `07d5bfbb78cb3e5c3d528d7cdb38c86087b38ea73a6e986f72fb0c75a29b78ce`
+- Value: `[YOUR_GENERATED_JWT_SECRET]`
 
 **Step 3:** Run these:
 ```bash

@@ -74,7 +74,7 @@ Mohon diselesaikan. Pembayaran bisa lewat e-wallet atau rekening. Terima kasih."
 
 ### Required
 ```env
-TELEGRAM_BOT_TOKEN=8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o
+TELEGRAM_BOT_TOKEN=[your-bot-token-here]
 ```
 
 ### Optional (Fallback)

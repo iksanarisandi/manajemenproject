@@ -42,7 +42,7 @@ Edit file `.env`:
 ```env
 DATABASE_URL=postgresql://[paste dari Netlify]
 JWT_SECRET=[generate dari randomkeygen.com]
-TELEGRAM_BOT_TOKEN=8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o
+TELEGRAM_BOT_TOKEN=[YOUR_BOT_TOKEN_HERE]
 TELEGRAM_CHAT_ID=
 ```
 
@@ -179,7 +179,7 @@ Edit `.env` file, isi:
 ```env
 DATABASE_URL=postgresql://[dari-netlify]
 JWT_SECRET=[random-32-characters]
-TELEGRAM_BOT_TOKEN=8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o
+TELEGRAM_BOT_TOKEN=[YOUR_BOT_TOKEN_HERE]
 ```
 
 ### 3. Add JWT_SECRET to Netlify

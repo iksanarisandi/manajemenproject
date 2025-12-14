@@ -38,7 +38,7 @@ LANGKAH 2: TAMBAH JWT_SECRET KE NETLIFY (1 menit)
 
 3. Isi:
    Key:   JWT_SECRET
-   Value: 07d5bfbb78cb3e5c3d528d7cdb38c86087b38ea73a6e986f72fb0c75a29b78ce
+   Value: [your-generated-secret-here]
 
 4. Klik: "Create variable"
 
@@ -78,7 +78,7 @@ SETELAH DEPLOY:
 SIMPAN INI:
 
 Site URL: https://manajemenproject.netlify.app
-JWT Secret: 07d5bfbb78cb3e5c3d528d7cdb38c86087b38ea73a6e986f72fb0c75a29b78ce
+JWT Secret: [Stored in Netlify environment]
 Email: iksan10058@gmail.com
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

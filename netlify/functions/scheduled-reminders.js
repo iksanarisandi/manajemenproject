@@ -1,9 +1,99 @@
 import { getDb } from '../../db/connection.js'
 import { maintenance, projects, clients, users, ownerSettings } from '../../db/schema.js'
-import { sendTelegramMessage } from './utils/telegram.js'
+import { sendTelegramMessageWithButton, buildWhatsAppLink } from './utils/telegram.js'
 import { eq, and } from 'drizzle-orm'
 
-export async function handler(event) {
+// Admin Telegram ID dan Bot Token dari environment variables
+const ADMIN_TELEGRAM_ID = process.env.ADMIN_TELEGRAM_ID
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
+
+// 23 jam dalam milliseconds untuk duplicate prevention
+const DUPLICATE_PREVENTION_HOURS = 23
+const DUPLICATE_PREVENTION_MS = DUPLICATE_PREVENTION_HOURS * 60 * 60 * 1000
+
+/**
+ * Cek apakah reminder sudah dikirim dalam 23 jam terakhir
+ * @param {Date|string|null} lastReminderSent - Timestamp terakhir reminder dikirim
+ * @param {Date} currentTime - Waktu saat ini
+ * @returns {boolean} - true jika harus skip (sudah kirim dalam 23 jam), false jika boleh kirim
+ */
+export function shouldSkipReminder(lastReminderSent, currentTime = new Date()) {
+  // Jika belum pernah kirim, jangan skip (boleh kirim)
+  if (!lastReminderSent) {
+    return false
+  }
+  
+  const lastSentTime = new Date(lastReminderSent)
+  const timeDifferenceMs = currentTime.getTime() - lastSentTime.getTime()
+  
+  // Skip jika sudah kirim dalam 23 jam terakhir
+  return timeDifferenceMs < DUPLICATE_PREVENTION_MS
+}
+
+/**
+ * Format nominal ke format Indonesia (Rp dengan separator ribuan)
+ * @param {number|string} amount - Nominal yang akan diformat
+ * @returns {string} - Nominal dalam format "Rp 1.000.000"
+ */
+function formatRupiah(amount) {
+  const num = parseFloat(amount) || 0
+  return `Rp ${new Intl.NumberFormat('id-ID').format(num)}`
+}
+
+/**
+ * Build pesan notifikasi dengan format informatif
+ * @param {Object} record - Data maintenance record
+ * @param {number} currentDay - Tanggal hari ini
+ * @returns {string} - Pesan dalam format HTML
+ */
+function buildNotificationMessage(record, currentDay) {
+  const formattedAmount = formatRupiah(record.monthlyCost)
+  
+  return `🔔 <b>Reminder Tagihan Maintenance</b>\n\n` +
+    `👤 <b>Klien:</b> ${record.clientName}\n` +
+    `📁 <b>Project:</b> ${record.projectName}\n` +
+    `💰 <b>Nominal:</b> ${formattedAmount}\n` +
+    `📅 <b>Jatuh Tempo:</b> Tanggal ${currentDay} setiap bulan\n` +
+    `📱 <b>WhatsApp:</b> ${record.clientWa || 'Tidak tersedia'}\n\n` +
+    `⏰ Silakan kirim reminder ke klien.`
+}
+
+/**
+ * Build inline keyboard dengan tombol WhatsApp
+ * @param {string} phoneNumber - Nomor WA klien
+ * @param {string} clientName - Nama klien
+ * @param {string} projectName - Nama project
+ * @param {number} amount - Nominal tagihan
+ * @returns {Array|null} - Inline keyboard array atau null jika nomor tidak valid
+ */
+function buildInlineKeyboard(phoneNumber, clientName, projectName, amount) {
+  const waLink = buildWhatsAppLink(phoneNumber, clientName, projectName, amount)
+  
+  // Jika nomor WA tidak valid, return null (kirim tanpa button)
+  if (!waLink) {
+    return null
+  }
+  
+  return [
+    [
+      {
+        text: '📱 Kirim Reminder ke WA',
+        url: waLink
+      }
+    ]
+  ]
+}
+
+export async function handler(_event) {
+  // Validasi environment variables
+  if (!ADMIN_TELEGRAM_ID || !TELEGRAM_BOT_TOKEN) {
+    console.error('Missing required environment variables: ADMIN_TELEGRAM_ID or TELEGRAM_BOT_TOKEN')
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Missing configuration' }),
+    }
+  }
+  
   try {
     const db = getDb()
     
@@ -32,32 +122,44 @@ export async function handler(event) {
       ))
 
     let sentCount = 0
+    let skippedCount = 0
+    
     for (const record of dueMaintenances) {
-      if (!record.telegramChatId) {
-        console.log(`No Telegram Chat ID configured for user ${record.userId}`)
+      // Cek duplicate prevention: skip jika sudah kirim dalam 23 jam terakhir
+      if (shouldSkipReminder(record.lastReminderSent, today)) {
+        skippedCount++
+        console.log(`Skipping maintenance ID ${record.maintenanceId}: already sent within 23 hours`)
         continue
       }
 
-      const lastSent = record.lastReminderSent
-      const shouldSend = !lastSent || (today - new Date(lastSent)) > 23 * 60 * 60 * 1000
+      // Boleh kirim karena belum pernah kirim atau sudah lebih dari 23 jam
+      // Build message dengan format informatif
+      const message = buildNotificationMessage(record, currentDay)
+      
+      // Build inline keyboard dengan tombol WhatsApp
+      const inlineKeyboard = buildInlineKeyboard(
+        record.clientWa,
+        record.clientName,
+        record.projectName,
+        record.monthlyCost
+      )
 
-      if (shouldSend) {
-        const message = `🔔 <b>Maintenance Payment Reminder</b>\n\n` +
-          `Client: ${record.clientName}\n` +
-          `Project: ${record.projectName}\n` +
-          `Amount: Rp ${parseFloat(record.monthlyCost).toLocaleString('id-ID')}\n` +
-          `Due Date: ${currentDay} of this month\n` +
-          `WhatsApp: ${record.clientWa}\n\n` +
-          `Message to send:\n"Halo kak ${record.clientName}, pembayaran maintenance web ${record.projectName} senilai ${parseFloat(record.monthlyCost).toLocaleString('id-ID')}. Mohon diselesaikan. Pembayaran bisa lewat e-wallet atau rekening. Terima kasih."`
+      // Kirim ke Admin Telegram ID (hardcoded)
+      const sent = await sendTelegramMessageWithButton(
+        message,
+        ADMIN_TELEGRAM_ID,
+        inlineKeyboard
+      )
 
-        const sent = await sendTelegramMessage(message, record.telegramChatId)
-
-        if (sent) {
-          await db.update(maintenance)
-            .set({ lastReminderSent: today })
-            .where(eq(maintenance.id, record.maintenanceId))
-          sentCount++
-        }
+      if (sent) {
+        // Update timestamp setelah berhasil kirim (Requirements 3.3)
+        await db.update(maintenance)
+          .set({ lastReminderSent: today })
+          .where(eq(maintenance.id, record.maintenanceId))
+        sentCount++
+      } else {
+        // Log error untuk troubleshooting (Requirements 1.4)
+        console.error(`Failed to send notification for maintenance ID: ${record.maintenanceId}`)
       }
     }
 
@@ -66,7 +168,8 @@ export async function handler(event) {
       body: JSON.stringify({ 
         message: 'Reminders checked', 
         total: dueMaintenances.length,
-        sent: sentCount
+        sent: sentCount,
+        skipped: skippedCount
       }),
     }
   } catch (error) {

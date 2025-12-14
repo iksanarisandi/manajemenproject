@@ -20,7 +20,7 @@ echo Creating .env file...
 echo # Environment Variables
 echo DATABASE_URL=%db_url%
 echo JWT_SECRET=%jwt_secret%
-echo TELEGRAM_BOT_TOKEN=8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o
+echo TELEGRAM_BOT_TOKEN=
 echo.
 echo # TELEGRAM_CHAT_ID is optional - users set it in Profile Settings
 echo TELEGRAM_CHAT_ID=
@@ -37,7 +37,7 @@ echo 1. Go to: https://app.netlify.com
 echo 2. Your site -^> Site settings -^> Environment variables
 echo 3. Add new variable:
 echo    Key: JWT_SECRET
-echo    Value: %jwt_secret%
+echo    Value: [COPY THIS FROM OUTPUT ABOVE]
 echo.
 echo 4. Then run: migrate-and-deploy.bat
 echo.

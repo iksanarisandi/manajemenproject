@@ -100,6 +100,6 @@ echo   SAVE THESE:
 echo ========================================
 echo.
 echo Site: https://manajemenproject.netlify.app
-echo JWT Secret: 07d5bfbb78cb3e5c3d528d7cdb38c86087b38ea73a6e986f72fb0c75a29b78ce
+echo JWT Secret: [Check Netlify environment variables]
 echo.
 pause

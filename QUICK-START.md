@@ -29,7 +29,7 @@ netlify init
 **In Netlify Dashboard** (Site settings → Environment variables):
 ```
 JWT_SECRET = [Generate random string from randomkeygen.com]
-TELEGRAM_BOT_TOKEN = 8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o
+TELEGRAM_BOT_TOKEN = [Your bot token from @BotFather]
 TELEGRAM_CHAT_ID = [Your Chat ID from step 3]
 ```
 
@@ -38,7 +38,7 @@ TELEGRAM_CHAT_ID = [Your Chat ID from step 3]
 # Copy the DATABASE_URL from Netlify environment variables
 DATABASE_URL=postgresql://...
 JWT_SECRET=same-as-netlify
-TELEGRAM_BOT_TOKEN=8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o
+TELEGRAM_BOT_TOKEN=[YOUR_BOT_TOKEN_HERE]
 TELEGRAM_CHAT_ID=your_chat_id
 ```
 

@@ -179,10 +179,9 @@
 
 **Site URL:** https://manajemenproject.netlify.app
 
-**JWT Secret:** `07d5bfbb78cb3e5c3d528d7cdb38c86087b38ea73a6e986f72fb0c75a29b78ce`
-*(Save this somewhere safe)*
+**JWT Secret:** `[Stored securely in environment variables]`
 
-**Bot Token:** `8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o`
+**Bot Token:** `[Stored securely in environment variables]`
 
 **Netlify Account:** iksan10058@gmail.com
 

@@ -142,10 +142,7 @@ Pembayaran bisa lewat e-wallet atau rekening. Terima kasih."
 ## 🎯 Setup Telegram Bot:
 
 ### Step 1: Sudah Ada Bot Token ✅
-Bot token sudah dikonfigurasi:
-```
-TELEGRAM_BOT_TOKEN=8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o
-```
+Bot token sudah dikonfigurasi securely in Netlify environment variables.
 
 ### Step 2: Dapatkan Chat ID Anda
 
@@ -393,7 +390,7 @@ fetch('https://manajemenproject.netlify.app/.netlify/functions/scheduled-reminde
 
 ---
 
-**Bot Token:** `8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o` ✅
+**Bot Token:** `[Configured in Netlify environment]` ✅
 **Schedule:** Every day at 9 AM UTC (4 PM WIB) ✅
 **Status:** Active & Running ✅
 

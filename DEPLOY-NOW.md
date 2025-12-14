@@ -75,7 +75,7 @@ Tambahkan variable berikut:
 |-----|-------|------------|
 | `DATABASE_URL` | *(Sudah ada dari Neon)* | Auto-generated |
 | `JWT_SECRET` | *Random string* | [randomkeygen.com](https://randomkeygen.com) → Copy "Fort Knox Passwords" |
-| `TELEGRAM_BOT_TOKEN` | `8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o` | Sudah disediakan |
+| `TELEGRAM_BOT_TOKEN` | `[YOUR_BOT_TOKEN_HERE]` | Sudah disediakan |
 
 **Notes:**
 - `DATABASE_URL` sudah otomatis ditambahkan oleh Neon integration
@@ -96,7 +96,7 @@ File `.env` Anda:
 ```env
 DATABASE_URL=postgresql://...dari-netlify...
 JWT_SECRET=sama-dengan-netlify
-TELEGRAM_BOT_TOKEN=8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o
+TELEGRAM_BOT_TOKEN=[YOUR_BOT_TOKEN_HERE]
 ```
 
 ### 7️⃣ Run Database Migrations (1 menit)

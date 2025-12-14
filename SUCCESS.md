@@ -95,7 +95,7 @@ If you get error → Follow Option 1 above to setup DATABASE_URL
 ## 🔐 Your Info (Save This):
 
 **Site:** https://manajemenproject.netlify.app
-**JWT Secret:** `07d5bfbb78cb3e5c3d528d7cdb38c86087b38ea73a6e986f72fb0c75a29b78ce`
+**JWT Secret:** `[CHECK_NETLIFY_ENV_VARS]`
 **Email:** iksan10058@gmail.com
 **Project:** manajemenproject
 

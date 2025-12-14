@@ -140,14 +140,14 @@ netlify init
 ### Step 4: Configure Environment Variables
 **Netlify Dashboard:**
 - `JWT_SECRET` (generate random string)
-- `TELEGRAM_BOT_TOKEN` = `8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o`
+- `TELEGRAM_BOT_TOKEN` = `[YOUR_BOT_TOKEN_HERE]`
 - `TELEGRAM_CHAT_ID` (get from @userinfobot on Telegram)
 
 **Local `.env`:**
 ```env
 DATABASE_URL=[from Netlify]
 JWT_SECRET=[same as Netlify]
-TELEGRAM_BOT_TOKEN=8285823339:AAFf0YQF1WzkOW2mm2NzSzpEI67sJafn42o
+TELEGRAM_BOT_TOKEN=[YOUR_BOT_TOKEN_HERE]
 TELEGRAM_CHAT_ID=[your chat ID]
 ```
 
