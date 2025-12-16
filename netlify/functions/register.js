@@ -1,19 +1,39 @@
+import { corsHeaders } from './utils/auth.js'
+
+// ============================================
+// REGISTRATION DISABLED
+// Uncomment the code below to re-enable registration
+// ============================================
+
+export async function handler(event) {
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers: corsHeaders(), body: '' }
+  }
+
+  // Registration is disabled
+  return {
+    statusCode: 403,
+    headers: corsHeaders(),
+    body: JSON.stringify({ 
+      error: 'Registration is currently disabled',
+      message: 'Please contact administrator for access'
+    }),
+  }
+}
+
+/*
+// ORIGINAL CODE - Uncomment to re-enable registration
+
 import { getDb } from '../../db/connection.js'
 import { users } from '../../db/schema.js'
 import { hashPassword, generateToken, corsHeaders } from './utils/auth.js'
 import { withRateLimit } from './utils/rateLimit.js'
 import { eq } from 'drizzle-orm'
 
-// Cloudflare Turnstile Secret Key
 const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY
 
-/**
- * Verify Cloudflare Turnstile token
- */
 async function verifyTurnstile(token, ip) {
-  // Skip verification jika secret key tidak dikonfigurasi (development)
   if (!TURNSTILE_SECRET_KEY) {
-    console.warn('TURNSTILE_SECRET_KEY not configured, skipping verification')
     return true
   }
 
@@ -49,17 +69,14 @@ export async function handler(event) {
     }
   }
 
-  // Apply rate limiting
   return withRateLimit(event, 'register', async () => {
     try {
       const { email, password, turnstileToken } = JSON.parse(event.body)
 
-      // Get client IP
       const clientIp = event.headers['x-nf-client-connection-ip'] 
         || event.headers['x-forwarded-for']?.split(',')[0]?.trim()
         || 'unknown'
 
-      // Verify Turnstile CAPTCHA (wajib jika secret key dikonfigurasi)
       if (TURNSTILE_SECRET_KEY) {
         if (!turnstileToken) {
           return {
@@ -74,7 +91,7 @@ export async function handler(event) {
           return {
             statusCode: 400,
             headers: corsHeaders(),
-            body: JSON.stringify({ error: 'CAPTCHA verification failed. Please try again.' }),
+            body: JSON.stringify({ error: 'CAPTCHA verification failed' }),
           }
         }
       }
@@ -95,37 +112,37 @@ export async function handler(event) {
         }
       }
 
-    const db = getDb()
+      const db = getDb()
 
-    const existingUser = await db.select().from(users).where(eq(users.email, email)).limit(1)
-    
-    if (existingUser.length > 0) {
-      return {
-        statusCode: 400,
-        headers: corsHeaders(),
-        body: JSON.stringify({ error: 'Email already exists' }),
+      const existingUser = await db.select().from(users).where(eq(users.email, email)).limit(1)
+      
+      if (existingUser.length > 0) {
+        return {
+          statusCode: 400,
+          headers: corsHeaders(),
+          body: JSON.stringify({ error: 'Email already exists' }),
+        }
       }
-    }
 
-    const passwordHash = hashPassword(password)
-    const [newUser] = await db.insert(users).values({
-      email,
-      passwordHash,
-    }).returning()
+      const passwordHash = hashPassword(password)
+      const [newUser] = await db.insert(users).values({
+        email,
+        passwordHash,
+      }).returning()
 
-    const token = generateToken(newUser.id)
+      const token = generateToken(newUser.id)
 
-    return {
-      statusCode: 201,
-      headers: corsHeaders(),
-      body: JSON.stringify({
-        token,
-        user: {
-          id: newUser.id,
-          email: newUser.email,
-        },
-      }),
-    }
+      return {
+        statusCode: 201,
+        headers: corsHeaders(),
+        body: JSON.stringify({
+          token,
+          user: {
+            id: newUser.id,
+            email: newUser.email,
+          },
+        }),
+      }
     } catch (error) {
       console.error('Register error:', error)
       return {
@@ -136,3 +153,4 @@ export async function handler(event) {
     }
   })
 }
+*/
