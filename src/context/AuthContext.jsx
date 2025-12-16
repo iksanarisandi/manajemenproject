@@ -31,15 +31,23 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
-  const login = async (email, password) => {
-    const res = await axios.post('/.netlify/functions/login', { email, password })
+  const login = async (email, password, turnstileToken) => {
+    const res = await axios.post('/.netlify/functions/login', { 
+      email, 
+      password,
+      turnstileToken 
+    })
     localStorage.setItem('token', res.data.token)
     setUser(res.data.user)
     return res.data
   }
 
-  const register = async (email, password) => {
-    const res = await axios.post('/.netlify/functions/register', { email, password })
+  const register = async (email, password, turnstileToken) => {
+    const res = await axios.post('/.netlify/functions/register', { 
+      email, 
+      password,
+      turnstileToken 
+    })
     localStorage.setItem('token', res.data.token)
     setUser(res.data.user)
     return res.data

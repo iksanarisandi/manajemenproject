@@ -1,6 +1,7 @@
 import { getDb } from '../../db/connection.js'
 import { users } from '../../db/schema.js'
 import { getUserFromHeaders, corsHeaders } from './utils/auth.js'
+import { withRateLimit } from './utils/rateLimit.js'
 import { eq } from 'drizzle-orm'
 
 export async function handler(event) {
@@ -16,8 +17,10 @@ export async function handler(event) {
     }
   }
 
-  try {
-    const userId = getUserFromHeaders(event.headers)
+  // Apply rate limiting
+  return withRateLimit(event, 'verify', async () => {
+    try {
+      const userId = getUserFromHeaders(event.headers)
 
     if (!userId) {
       return {
@@ -48,12 +51,13 @@ export async function handler(event) {
         },
       }),
     }
-  } catch (error) {
-    console.error('Verify error:', error)
-    return {
-      statusCode: 500,
-      headers: corsHeaders(),
-      body: JSON.stringify({ error: 'Internal server error' }),
+    } catch (error) {
+      console.error('Verify error:', error)
+      return {
+        statusCode: 500,
+        headers: corsHeaders(),
+        body: JSON.stringify({ error: 'Internal server error' }),
+      }
     }
-  }
+  })
 }

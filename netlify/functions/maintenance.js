@@ -1,6 +1,7 @@
 import { getDb } from '../../db/connection.js'
 import { maintenance, projects, clients } from '../../db/schema.js'
 import { getUserFromHeaders, corsHeaders } from './utils/auth.js'
+import { withRateLimit } from './utils/rateLimit.js'
 import { eq, and } from 'drizzle-orm'
 
 export async function handler(event) {
@@ -17,10 +18,12 @@ export async function handler(event) {
     }
   }
 
-  const db = getDb()
+  // Apply rate limiting
+  return withRateLimit(event, 'maintenance', async () => {
+    const db = getDb()
 
-  try {
-    if (event.httpMethod === 'GET') {
+    try {
+      if (event.httpMethod === 'GET') {
       const allMaintenance = await db.select({
         id: maintenance.id,
         projectId: maintenance.projectId,
@@ -176,17 +179,18 @@ export async function handler(event) {
       }
     }
 
-    return {
-      statusCode: 405,
-      headers: corsHeaders(),
-      body: JSON.stringify({ error: 'Method not allowed' }),
+      return {
+        statusCode: 405,
+        headers: corsHeaders(),
+        body: JSON.stringify({ error: 'Method not allowed' }),
+      }
+    } catch (error) {
+      console.error('Maintenance API error:', error)
+      return {
+        statusCode: 500,
+        headers: corsHeaders(),
+        body: JSON.stringify({ error: 'Internal server error' }),
+      }
     }
-  } catch (error) {
-    console.error('Maintenance API error:', error)
-    return {
-      statusCode: 500,
-      headers: corsHeaders(),
-      body: JSON.stringify({ error: 'Internal server error' }),
-    }
-  }
+  })
 }

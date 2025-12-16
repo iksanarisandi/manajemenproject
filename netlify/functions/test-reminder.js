@@ -1,13 +1,16 @@
 import { sendTelegramMessage } from './utils/telegram.js'
 import { corsHeaders } from './utils/auth.js'
+import { withRateLimit } from './utils/rateLimit.js'
 
 export async function handler(event) {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers: corsHeaders(), body: '' }
   }
 
-  try {
-    // Parse request body
+  // Apply rate limiting - ketat untuk test endpoint
+  return withRateLimit(event, 'test-reminder', async () => {
+    try {
+      // Parse request body
     let chatId = null
     if (event.body) {
       const body = JSON.parse(event.body)
@@ -57,15 +60,16 @@ export async function handler(event) {
         }),
       }
     }
-  } catch (error) {
-    console.error('Test reminder error:', error)
-    return {
-      statusCode: 500,
-      headers: corsHeaders(),
-      body: JSON.stringify({
-        error: 'Internal server error',
-        details: error.message
-      }),
+    } catch (error) {
+      console.error('Test reminder error:', error)
+      return {
+        statusCode: 500,
+        headers: corsHeaders(),
+        body: JSON.stringify({
+          error: 'Internal server error',
+          details: error.message
+        }),
+      }
     }
-  }
+  })
 }

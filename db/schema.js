@@ -51,3 +51,13 @@ export const ownerSettings = pgTable('owner_settings', {
   telegramChatId: varchar('telegram_chat_id', { length: 50 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
+
+// Rate limiting table untuk mencegah API abuse
+export const rateLimits = pgTable('rate_limits', {
+  id: serial('id').primaryKey(),
+  identifier: varchar('identifier', { length: 255 }).notNull(), // IP address atau user ID
+  endpoint: varchar('endpoint', { length: 100 }).notNull(), // nama function
+  requestCount: integer('request_count').notNull().default(1),
+  windowStart: timestamp('window_start').notNull().defaultNow(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})

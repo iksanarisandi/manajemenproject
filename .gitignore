@@ -32,3 +32,11 @@ Thumbs.db
 
 # Factory
 .factory/
+
+# Temporary files
+temp_env.txt
+*.tmp
+*.temp
+
+# Batch scripts with potential credentials
+setup-rate-limit.bat

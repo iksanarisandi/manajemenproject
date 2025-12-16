@@ -106,6 +106,29 @@ export async function handler(event) {
       )
     `
 
+    // Create rate_limits table untuk API abuse prevention
+    await sql`
+      CREATE TABLE IF NOT EXISTS rate_limits (
+        id SERIAL PRIMARY KEY,
+        identifier VARCHAR(255) NOT NULL,
+        endpoint VARCHAR(100) NOT NULL,
+        request_count INTEGER DEFAULT 1 NOT NULL,
+        window_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+      )
+    `
+
+    // Create indexes for rate_limits
+    await sql`
+      CREATE INDEX IF NOT EXISTS rate_limits_identifier_endpoint_idx 
+      ON rate_limits (identifier, endpoint)
+    `
+
+    await sql`
+      CREATE INDEX IF NOT EXISTS rate_limits_window_start_idx 
+      ON rate_limits (window_start)
+    `
+
     return {
       statusCode: 200,
       headers: corsHeaders(),

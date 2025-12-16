@@ -1,25 +1,60 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+
+// Cloudflare Turnstile Site Key
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [turnstileToken, setTurnstileToken] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
+  const turnstileRef = useRef(null)
+
+  useEffect(() => {
+    // Render Turnstile widget
+    if (window.turnstile && turnstileRef.current) {
+      window.turnstile.render(turnstileRef.current, {
+        sitekey: TURNSTILE_SITE_KEY,
+        callback: (token) => {
+          setTurnstileToken(token)
+        },
+        'expired-callback': () => {
+          setTurnstileToken('')
+        },
+        'error-callback': () => {
+          setError('CAPTCHA error. Please refresh the page.')
+        },
+      })
+    }
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+
+    // Validasi Turnstile token
+    if (!turnstileToken) {
+      setError('Please complete the CAPTCHA verification')
+      return
+    }
+
     setLoading(true)
 
     try {
-      await login(email, password)
+      await login(email, password, turnstileToken)
       navigate('/')
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to login')
+      // Reset Turnstile on error
+      if (window.turnstile) {
+        window.turnstile.reset()
+      }
+      setTurnstileToken('')
     } finally {
       setLoading(false)
     }
@@ -67,9 +102,14 @@ export default function Login() {
             />
           </div>
 
+          {/* Cloudflare Turnstile Widget */}
+          <div className="flex justify-center">
+            <div ref={turnstileRef}></div>
+          </div>
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !turnstileToken}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
           >
             {loading ? 'Logging in...' : 'Login'}
